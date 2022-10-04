@@ -69,9 +69,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     if args.stable_diffusion:
-        embedder = FrozenCLIPEmbedder().cuda()
+        embedder = FrozenCLIPEmbedder()
     else:
-        embedder = BERTEmbedder(n_embed=1280, n_layer=32).cuda()
+        embedder = BERTEmbedder(n_embed=1280, n_layer=32)
 
     EmbeddingManager = partial(EmbeddingManager, embedder, ["*"])
     #tokenizer = BERTTokenizer(vq_interface=False, max_length=77)
@@ -109,4 +109,4 @@ if __name__ == "__main__":
     merged_manager.save(args.output_path)
 
     print("Managers merged. Final list of placeholders: ")
-    print(placeholder_to_src)
+    print(placeholder_to_src)   
