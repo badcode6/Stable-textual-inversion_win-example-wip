@@ -33,7 +33,7 @@ def get_font(txt, img_fraction=0.05):
 #script
 def load_model_from_config(config, ckpt, verbose=False):
     print(f"Loading model from {ckpt}")
-    pl_sd = torch.load(ckpt, map_location="cuda")
+    pl_sd = torch.load(ckpt, map_location="cpu")
     sd = pl_sd["state_dict"]
     config.model.params.ckpt_path = ckpt
     model = instantiate_from_config(config.model)
@@ -45,7 +45,6 @@ def load_model_from_config(config, ckpt, verbose=False):
         print("unexpected keys:")
         print(u)
 
-    model.cuda()
     return model
 
 def get_parser(**parser_kwargs):
