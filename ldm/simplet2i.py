@@ -185,7 +185,7 @@ The vast majority of these arguments default to reasonable values.
         # Gawd. Too many levels of indent here. Need to refactor into smaller routines!
         try:
             with torch.no_grad():
-                with precision_scope("cuda"):
+                with precision_scope("cpu"):
                     with model.ema_scope():
                         all_samples = list()
                         for n in trange(iterations, desc="Sampling"):
@@ -304,7 +304,7 @@ The vast majority of these arguments default to reasonable values.
         assert os.path.isfile(init_img)
         init_image = self._load_img(init_img).to(self.device)
         init_image = repeat(init_image, '1 ... -> b ...', b=batch_size)
-        with precision_scope("cuda"):
+        with precision_scope("cpu"):
             init_latent = model.get_first_stage_encoding(model.encode_first_stage(init_image))  # move to latent space
 
         sampler.make_schedule(ddim_num_steps=steps, ddim_eta=ddim_eta, verbose=False)
@@ -326,7 +326,7 @@ The vast majority of these arguments default to reasonable values.
         # Gawd. Too many levels of indent here. Need to refactor into smaller routines!
         try:
             with torch.no_grad():
-                with precision_scope("cuda"):
+                with precision_scope("cpu"):
                     with model.ema_scope():
                         all_samples = list()
                         for n in trange(iterations, desc="Sampling"):
@@ -419,7 +419,7 @@ The vast majority of these arguments default to reasonable values.
             seed_everything(self.seed)
             try:
                 config = OmegaConf.load(self.config)
-                self.device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+                self.device = torch.device("cpu")
                 model = self._load_model_from_config(config,self.weights)
                 self.model = model.to(self.device)
                 if self.embedding_path:
@@ -450,7 +450,6 @@ The vast majority of these arguments default to reasonable values.
         sd = pl_sd["state_dict"]
         model = instantiate_from_config(config.model)
         m, u = model.load_state_dict(sd, strict=False)
-        model.cuda()
         model.eval()
         if self.full_precision:
             print('Using slower but more accurate full-precision math (--full_precision)')
